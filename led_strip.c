@@ -3,8 +3,8 @@
    This implementation disables interrupts while it does bit-banging with inline assembly.
  */
 
-// This line specifies the frequency your AVR is running at.
-// This code supports 20 MHz and 16 MHz.
+/* This line specifies the frequency your AVR is running at.
+   This code supports 20 MHz and 16 MHz. */
 #define F_CPU 20000000
 
 // These lines specify what pin the LED strip is on.
