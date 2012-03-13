@@ -4,7 +4,7 @@ h1. Example AVR code for addressable RGB LED strips from Pololu
 
 h2. Summary
 
-This is example code for AVRs for controlling the addressable RGB LED strips from Pololu:
+This is example AVR C code for controlling the addressable RGB LED strips from Pololu:
 
 * "Addressable RGB LED Strip: One-Wire Interface, 5V, 30 LEDs, 1m":http://www.pololu.com/product/catalog/2540
 * "Addressable RGB LED Strip: One-Wire Interface, 5V, 60 LEDs, 2m":http://www.pololu.com/product/catalog/2541
