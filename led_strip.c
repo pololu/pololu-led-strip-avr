@@ -78,7 +78,8 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "rol __tmp_reg__\n"                      // Rotate left through carry.
 
 #if F_CPU == 16000000
-        "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
@@ -90,10 +91,8 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 
 #if F_CPU == 16000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
-		// Delay X
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
@@ -101,7 +100,8 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
 
 #if F_CPU == 16000000
-        "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
