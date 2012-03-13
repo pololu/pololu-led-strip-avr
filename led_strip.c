@@ -123,7 +123,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
   _delay_us(24);  // Hold the line low for 15 microseconds to send the reset signal.
 }
 
-#define LED_COUNT 30
+#define LED_COUNT 60
 rgb_color colors[LED_COUNT];
 
 int main()
@@ -133,14 +133,14 @@ int main()
   while(1)
   {
     unsigned int i;
-	for(i = 0; i < LED_COUNT; i++)
+    for(i = 0; i < LED_COUNT; i++)
     {
       unsigned char x = (time >> 2) - 8*i;
       colors[i] = (rgb_color){ x, 255 - x, x };
     }
 
     led_strip_write(colors, LED_COUNT);
-    
+
     _delay_ms(20);
     time += 20;
   }
