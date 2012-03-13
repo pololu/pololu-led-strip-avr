@@ -94,6 +94,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n"
 #elif F_CPU == 20000000
+		// Delay X
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
@@ -104,7 +105,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 #if F_CPU == 16000000
         "nop\n"
 #elif F_CPU == 20000000
-        "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
 
         "ret\n"
@@ -137,7 +138,7 @@ int main()
       unsigned char x = (time >> 2) - 8*i;
       colors[i] = (rgb_color){ x, 255 - x, x };
     }
- 
+
     led_strip_write(colors, LED_COUNT);
     
     _delay_ms(20);
