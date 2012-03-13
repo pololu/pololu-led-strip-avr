@@ -60,48 +60,66 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
     // The assembly below also increments the 'colors' pointer,
     // it will be pointing to the next color at the end of this loop.
     asm volatile(
-    "rcall send_led_strip_byte\n"  // Send red component.
-    "rcall send_led_strip_byte\n"  // Send green component.
-    "rcall send_led_strip_byte\n"  // Send blue component.
-    "rjmp led_strip_asm_end\n"     // Jump past the assembly subroutines.
+        "rcall send_led_strip_byte%=\n"  // Send red component.
+        "rcall send_led_strip_byte%=\n"  // Send green component.
+        "rcall send_led_strip_byte%=\n"  // Send blue component.
+        "rjmp led_strip_asm_end%=\n"     // Jump past the assembly subroutines.
 
-    // send_led_strip_byte subroutine:  Sends a byte to the LED strip.
-    "send_led_strip_byte:\n"
-    "ld __tmp_reg__, %a0+\n"      // Read the next color brightness byte and advance the pointer
-    "rcall send_led_strip_bit\n"  // Send most-significant bit (bit 7).
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"
-    "rcall send_led_strip_bit\n"  // Send least-significant bit (bit 0).
-    "ret\n"
+        // send_led_strip_byte subroutine:  Sends a byte to the LED strip.
+        "send_led_strip_byte%=:\n"
+        "ld __tmp_reg__, %a0+\n"        // Read the next color brightness byte and advance the pointer
+        "rcall send_led_strip_bit%=\n"  // Send most-significant bit (bit 7).
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"
+        "rcall send_led_strip_bit%=\n"  // Send least-significant bit (bit 0).
+        "ret\n"
 
-    // send_led_strip_bit subroutine:  Sends single bit to the LED strip by driving the data line
-    // high for some time.  The amount of time the line is high depends on whether the bit is 0 or 1,
-    // but this function always takes the same time (2 us).
-    "send_led_strip_bit:\n"
-    "sbi %2, %3\n"                           // Drive the line high.
-    "rol __tmp_reg__\n"                      // Rotate left through carry.
-    "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-    "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.    
-    "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-    "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-    "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-    "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
-    "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-    "ret\n"
-    
-    "led_strip_asm_end: "
-    : "=b" (colors)
-    : "0" (colors),                        // %a0 is a 16-bit indirect address register pointer,
-                                           // pointing to the next color to display
-      "I" (_SFR_IO_ADDR(LED_STRIP_PORT)),  // %2 is the port register (e.g. PORTC)
-      "I" (LED_STRIP_PIN)                  // %3 is the pin number (0-8)
+        // send_led_strip_bit subroutine:  Sends single bit to the LED strip by driving the data line
+        // high for some time.  The amount of time the line is high depends on whether the bit is 0 or 1,
+        // but this function always takes the same time (2 us).
+        "send_led_strip_bit%=:\n"
+        "sbi %2, %3\n"                           // Drive the line high.
+        "rol __tmp_reg__\n"                      // Rotate left through carry.
+
+#if F_CPU == 16000000
+        "nop\n" "nop\n" "nop\n" "nop\n"
+#elif F_CPU == 20000000
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+#endif
+        "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.    
+
+#if F_CPU == 16000000
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n"
+#elif F_CPU == 20000000
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+#endif
+
+        "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
+#if F_CPU == 16000000
+        "nop\n"
+#elif F_CPU == 20000000
+        "nop\n" "nop\n" "nop\n" "nop\n"
+#endif
+        "ret\n"
+        "led_strip_asm_end%=: "
+        : "=b" (colors)
+        : "0" (colors),         // %a0 points to the next color to display
+          "I" (_SFR_IO_ADDR(LED_STRIP_PORT)),   // %2 is the port register (e.g. PORTC)
+          "I" (LED_STRIP_PIN)     // %3 is the pin number (0-8)
     );
+
+    // Uncomment the line below to temporarily enable interrupts between each color.
+    //sei(); asm volatile("nop\n"); cli();
   }
-  sei();   // Re-enable interrupts now that we are done.
+  sei();          // Re-enable interrupts now that we are done.
   _delay_us(15);  // Hold the line low for 15 microseconds to send the reset signal.
 }
 
