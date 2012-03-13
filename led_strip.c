@@ -35,7 +35,7 @@ typedef struct rgb_color
  The colors parameter should point to an array of rgb_color structs that hold the colors to send.
  The count parameter is the number of colors to send.
 
- This function takes about 1.5 ms to update 30 LEDs.
+ This function takes about 2 ms to update 30 LEDs.
  Interrupts must be disabled during that time, so any interrupt-based library
  can be negatively affected by this function.
  */
