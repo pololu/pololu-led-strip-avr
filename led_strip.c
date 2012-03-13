@@ -1,24 +1,23 @@
 /* This is AVR code for driving the RGB LED strips from Pololu.
    It allows complete control over the color of an arbitrary number of LEDs.
    This implementation disables interrupts while it does bit-banging with inline assembly.
-   Date written: 2011-12-20
  */
 
 // This line specifies the frequency your AVR is running at.
 // This code supports 20 MHz and 16 MHz.
 #define F_CPU 20000000
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
-#include <math.h>
-
-// These lines define what pin the LED strip is on.
+// These lines specify what pin the LED strip is on.
 // You will either need to attach the LED strip's data line to PC0 or change these
 // lines to specify a different pin.
 #define LED_STRIP_PORT PORTC
 #define LED_STRIP_DDR  DDRC
 #define LED_STRIP_PIN  0
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <math.h>
 
 /** The rgb_color struct represents the color for an 8-bit RGB LED.
     Examples:
@@ -31,7 +30,6 @@ typedef struct rgb_color
 {
   unsigned char red, green, blue;
 } rgb_color;
-
 
 /** led_strip_write sends a series of colors to the LED strip, updating the LEDs.
  The colors parameter should point to an array of rgb_color structs that hold the colors to send.
