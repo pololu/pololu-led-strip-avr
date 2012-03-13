@@ -4,7 +4,8 @@
    Date written: 2011-12-20
  */
 
- // The frequency of your AVR.  This code supports 20 MHz and 16 MHz.
+// This line specifies the frequency your AVR is running at.
+// This code supports 20 MHz and 16 MHz.
 #define F_CPU 20000000
 
 #include <avr/io.h>
@@ -12,26 +13,20 @@
 #include <util/delay.h>
 #include <math.h>
 
-/** These lines define what pin the LED strip is on.
-    You will either need to attach the LED strip's data line to PC0 or change these
-    lines to specify a different pin.
-    
-    If you are using an Arduino, you will either need to attach the LED strip's data
-    line to Analog Input 0 (a.k.a. PC0) or change these lines to specify a different
-    pin.  Please refer to http://www.arduino.cc/en/Hacking/PinMapping    
-**/
+// These lines define what pin the LED strip is on.
+// You will either need to attach the LED strip's data line to PC0 or change these
+// lines to specify a different pin.
 #define LED_STRIP_PORT PORTC
 #define LED_STRIP_DDR  DDRC
 #define LED_STRIP_PIN  0
 
-
-/** The led_color struct represents the color for an 8-bit RGB LED.
+/** The rgb_color struct represents the color for an 8-bit RGB LED.
     Examples:
-      Black:      (led_color){ 0, 0, 0 }
-      Pure red:   (led_color){ 255, 0, 0 }
-      Pure green: (led_color){ 0, 255, 0 }
-      Pure blue:  (led_color){ 0, 0, 255 }
-      White:      (led_color){ 255, 255, 255} */
+      Black:      (rgb_color){ 0, 0, 0 }
+      Pure red:   (rgb_color){ 255, 0, 0 }
+      Pure green: (rgb_color){ 0, 255, 0 }
+      Pure blue:  (rgb_color){ 0, 0, 255 }
+      White:      (rgb_color){ 255, 255, 255} */
 typedef struct rgb_color
 {
   unsigned char red, green, blue;
@@ -39,11 +34,10 @@ typedef struct rgb_color
 
 
 /** led_strip_write sends a series of colors to the LED strip, updating the LEDs.
- The colors parameter should point to an array of led_color structs that hold the colors to send.
+ The colors parameter should point to an array of rgb_color structs that hold the colors to send.
  The count parameter is the number of colors to send.
 
- Running on a 20 MHz AVR, this function takes about 1.5 ms to update 30 LEDs.
- Running on a 16 MHz AVR, this function takes about 1.9 ms to update 30 LEDs.
+ This function takes about 1.5 ms to update 30 LEDs.
  Interrupts must be disabled during that time, so any interrupt-based library
  can be negatively affected by this function.
  */
@@ -89,7 +83,10 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "nop\n" "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+#else
+#error "Unsupported F_CPU"
 #endif
+
         "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.    
 
 #if F_CPU == 16000000
@@ -103,11 +100,13 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 #endif
 
         "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
+
 #if F_CPU == 16000000
         "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
+
         "ret\n"
         "led_strip_asm_end%=: "
         : "=b" (colors)
