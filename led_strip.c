@@ -81,6 +81,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "nop\n" "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #else
 #error "Unsupported F_CPU"
 #endif
@@ -95,7 +96,6 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 		// Delay X
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
 
         "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
@@ -103,6 +103,8 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 #if F_CPU == 16000000
         "nop\n"
 #elif F_CPU == 20000000
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
 
@@ -118,7 +120,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
     //sei(); asm volatile("nop\n"); cli();
   }
   sei();          // Re-enable interrupts now that we are done.
-  _delay_us(15);  // Hold the line low for 15 microseconds to send the reset signal.
+  _delay_us(24);  // Hold the line low for 15 microseconds to send the reset signal.
 }
 
 #define LED_COUNT 30
