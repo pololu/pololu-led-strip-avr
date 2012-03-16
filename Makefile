@@ -5,23 +5,26 @@ PORT = \\\\.\USBSER000
 
 CFLAGS=-g -Wall -mcall-prologues -mmcu=$(MCU) $(DEVICE_SPECIFIC_CFLAGS) -Os
 CC=avr-gcc
-OBJ2HEX=avr-objcopy 
-LDFLAGS=-Wl,-gc-sections -Wl,-relax
+OBJCOPY=avr-objcopy 
+OBJDUMP=avr-objdump
+LDFLAGS=-Wl,-gc-sections -Wl,-relax -Wl,-Map="$(@:%.elf=%.map)"
 
 AVRDUDE=avrdude
 TARGET=led_strip
-OBJECT_FILES=led_strip.o
 
-all: $(TARGET).hex
+all: $(TARGET).hex $(TARGET).lss
 
 clean:
-	rm -f *.o *.hex *.obj
+	rm -f *.o *.hex *.elf *.map *.lss
 
-%.hex: %.obj
-	$(OBJ2HEX) -R .eeprom -O ihex $< $@
+%.hex: %.elf
+	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.obj: $(OBJECT_FILES)
-	$(CC) $(CFLAGS) $(OBJECT_FILES) $(LDFLAGS) -o $@
+%.lss: %.elf
+	$(OBJDUMP) -h -S $< > $@
+	
+%.elf: %.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
 
 program: $(TARGET).hex
-	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c avrisp2 -P $(PORT) -U flash:w:$(TARGET).hex
+	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c avrisp2 -P $(PORT) -U flash:w:$<

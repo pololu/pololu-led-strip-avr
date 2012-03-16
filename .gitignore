@@ -1,3 +1,5 @@
 *.o
 *.hex
 *.obj
+*.lss
+*.map

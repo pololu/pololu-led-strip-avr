@@ -35,9 +35,14 @@ typedef struct rgb_color
  The colors parameter should point to an array of rgb_color structs that hold the colors to send.
  The count parameter is the number of colors to send.
 
- This function takes about 2 ms to update 30 LEDs.
+ This function takes less than 2 ms to update 30 LEDs.
  Interrupts must be disabled during that time, so any interrupt-based library
  can be negatively affected by this function.
+ 
+ Timing details at 20 MHz (the numbers slightly different at 16 MHz):
+  0 pulse  = 700 ns
+  1 pulse  = 1300 ns
+  "period" = 2500 ns
  */
 void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int count) 
 {
