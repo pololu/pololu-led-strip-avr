@@ -17,7 +17,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include <math.h>
 
 /** The rgb_color struct represents the color for an 8-bit RGB LED.
     Examples:
@@ -40,9 +39,9 @@ typedef struct rgb_color
  can be negatively affected by this function.
  
  Timing details at 20 MHz (the numbers slightly different at 16 MHz):
-  0 pulse  = 700 ns
-  1 pulse  = 1300 ns
-  "period" = 2500 ns
+  0 pulse  = 400 ns
+  1 pulse  = 850 ns
+  "period" = 1300 ns
  */
 void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int count) 
 {
@@ -83,23 +82,22 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "rol __tmp_reg__\n"                      // Rotate left through carry.
 
 #if F_CPU == 16000000
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n"
 #elif F_CPU == 20000000
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n" "nop\n" "nop\n"
 #else
 #error "Unsupported F_CPU"
 #endif
 
-        "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.    
+        "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.
 
 #if F_CPU == 16000000
+        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
+        "nop\n" "nop\n"
 #endif
 
         "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
@@ -108,9 +106,6 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #endif
 
         "ret\n"
