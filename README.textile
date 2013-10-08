@@ -6,9 +6,9 @@ h2. Summary
 
 This is example AVR C code for controlling the addressable RGB LED strips from Pololu:
 
-* "Addressable RGB LED Strip: One-Wire Interface, 5V, 30 LEDs, 1m":http://www.pololu.com/catalog/product/2543
-* "Addressable RGB LED Strip: One-Wire Interface, 5V, 60 LEDs, 2m":http://www.pololu.com/catalog/product/2544
-* "Addressable RGB LED Strip: One-Wire Interface, 5V, 60 LEDs, 5m":http://www.pololu.com/catalog/product/2545
+* "Addressable RGB LED Strip: One-Wire Interface, 5V, 1m":http://www.pololu.com/catalog/product/2543
+* "Addressable RGB LED Strip: One-Wire Interface, 5V, 2m":http://www.pololu.com/catalog/product/2544
+* "Addressable RGB LED Strip: One-Wire Interface, 5V, 5m":http://www.pololu.com/catalog/product/2545
 
 This version of the code does NOT work with the older, low-speed LED strips (items #2540, #2541, and #2542).  If you have one of those, you should use the version of this code from commit edc9e9d (committed on 2013-05-09).
 
