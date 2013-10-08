@@ -1,16 +1,15 @@
-DEVICE = atmega1284p
-MCU = atmega1284p
-AVRDUDE_DEVICE = m1284p
+MCU = atmega324p
+AVRDUDE_DEVICE = m324p -F
 PORT = \\\\.\USBSER000
 
-CFLAGS=-g -Wall -mcall-prologues -mmcu=$(MCU) $(DEVICE_SPECIFIC_CFLAGS) -Os
+CFLAGS=-g -Wall -mcall-prologues -mmcu=$(MCU) -Os
 CC=avr-gcc
 OBJCOPY=avr-objcopy 
 OBJDUMP=avr-objdump
 LDFLAGS=-Wl,-gc-sections -Wl,-relax -Wl,-Map="$(@:%.elf=%.map)"
 
 AVRDUDE=avrdude
-TARGET=led_strip
+TARGET=led_strip2
 
 all: $(TARGET).hex $(TARGET).lss
 

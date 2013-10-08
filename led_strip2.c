@@ -24,9 +24,7 @@ typedef struct rgb_color
   unsigned char red, green, blue;
 } rgb_color;
 
-/** The timing of this function is the same as led_strip_write() in led_strip.c except
-  it does two chains of LED strips simultaneously.
-  Updating 2*30 LEDs takes less than 2 ms.  **/
+/* The typical bit takes 1.45 microseconds, so you can update two strips of 30 LEDs each in less than 1.1 ms.  */
 void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color * colors2, unsigned int count) 
 {
   LED_STRIP1_PORT &= ~(1<<LED_STRIP1_PIN);
@@ -67,29 +65,20 @@ void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color *
         // high for some time.  The amount of time the line is high depends on whether the bit is 0 or 1,
         // but this function always takes the same time (2 us).
         "send_led_strip_bit%=:\n"
-        "sbi %6, %7\n"                           // Drive the line high.   
-        "nop\n" "nop\n" "nop\n" "nop\n"
-        
-        "sbi %8, %9\n"                           // Drive the line2 high.
-        "nop\n" "nop\n" "nop\n" "nop\n"
-        
-        "rol %2\n"                               // Rotate left through carry.
-        "brcs .+2\n" "cbi %6, %7\n"              // If the bit to send is 0, drive the line low now.    
-        "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
-        
-        "rol %3\n"                               // Rotate left through carry.
-        "brcs .+2\n" "cbi %8, %9\n"              // If the bit to send is 0, drive the line low now.    
-        "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
-
+        "sbi %6, %7\n"                           // #1: Drive high.
         "nop\n" "nop\n"
-
-        "cbi %6, %7\n"
-        "nop\n" "nop\n" "nop\n" "nop\n"
         
-        "cbi %8, %9\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n"
+        "rol %2\n"                               // #1: Rotate left through carry.
+        "sbi %8, %9\n"                           // #2: Drive high.
+        "brcs .+2\n" "cbi %6, %7\n"              // #1: If the bit to send is 0, drive the line low now.    
+        "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
+        
+        "rol %3\n"                               // #2: Rotate left through carry.
+        "brcs .+2\n" "cbi %8, %9\n"              // #2: If the bit to send is 0, drive the line low now.    
+        "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
 
+        "cbi %6, %7\n"                           // #1: Drive low.
+        "cbi %8, %9\n"                           // #2: Drive low.
         "ret\n"
         "led_strip_asm_end%=: "
         : "=b" (colors1),
