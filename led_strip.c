@@ -93,20 +93,12 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
 
 #if F_CPU == 16000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
         "nop\n" "nop\n"
 #endif
 
         "brcc .+2\n" "cbi %2, %3\n"              // If the bit to send is 1, drive the line low now.
-
-#if F_CPU == 16000000
-        "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
-        "nop\n" "nop\n" "nop\n"
-#elif F_CPU == 20000000
-#endif
 
         "ret\n"
         "led_strip_asm_end%=: "
