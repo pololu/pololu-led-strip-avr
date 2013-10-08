@@ -9,7 +9,7 @@ OBJDUMP=avr-objdump
 LDFLAGS=-Wl,-gc-sections -Wl,-relax -Wl,-Map="$(@:%.elf=%.map)"
 
 AVRDUDE=avrdude
-TARGET=led_strip2
+TARGET=led_strip
 
 all: $(TARGET).hex $(TARGET).lss
 
