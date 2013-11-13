@@ -42,15 +42,25 @@ void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color *
     // The assembly below also increments the 'colors' pointer,
     // it will be pointing to the next color at the end of this loop.
     asm volatile(
+        "ld %2, %a0+\n"
+        "ld %3, %a1+\n"
+        "ld %2, %a0\n"
+        "ld %3, %a1\n"
         "rcall send_led_strip_byte%=\n"  // Send red component.
+        "ld %2, -%a0\n"
+        "ld %3, -%a1\n"
         "rcall send_led_strip_byte%=\n"  // Send green component.
+        "ld %2, %a0+\n"
+        "ld %3, %a1+\n"
+        "ld %2, %a0+\n"
+        "ld %3, %a1+\n"
+        "ld %2, %a0+\n"
+        "ld %3, %a1+\n"
         "rcall send_led_strip_byte%=\n"  // Send blue component.
         "rjmp led_strip_asm_end%=\n"     // Jump past the assembly subroutines.
 
         // send_led_strip_byte subroutine:  Sends a byte to the LED strip.
         "send_led_strip_byte%=:\n"
-        "ld %2, %a0+\n"        // Read the next color brightness byte and advance the pointer
-        "ld %3, %a1+\n"        // Read the next color brightness byte and advance the pointer
         "rcall send_led_strip_bit%=\n"  // Send most-significant bit (bit 7).
         "rcall send_led_strip_bit%=\n"
         "rcall send_led_strip_bit%=\n"
