@@ -116,7 +116,7 @@ int main()
       colors1[i] = (rgb_color){ x, 255 - x, x };
       
       x = (time >> 2) - 50*i;
-	  if (x > 127){ x = 255 - x; }
+      if (x > 127){ x = 255 - x; }
       x = x*x >> 8;
       colors2[i] = (rgb_color){ 0, 0, 2*x };
     }
