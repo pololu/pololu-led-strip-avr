@@ -247,7 +247,7 @@ void __attribute__((noinline)) led_strip_write3(rgb_color * colors1, rgb_color *
     //sei(); asm volatile("nop\n"); cli();
   }
   sei();          // Re-enable interrupts now that we are done.
-  _delay_us(24);  // Hold the line low for 15 microseconds to send the reset signal.
+  _delay_us(50);  // Hold the line low for 15 microseconds to send the reset signal.
 }
 
 #define LED_COUNT 60
