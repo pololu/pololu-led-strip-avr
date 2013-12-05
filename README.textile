@@ -6,18 +6,18 @@ h2. Summary
 
 This is example AVR C code for controlling the addressable RGB LED strips from Pololu:
 
-* "Addressable RGB 30-LED Strip, 5V, 1m, WS2812B":http://www.pololu.com/catalog/product/2546
-* "Addressable RGB 60-LED Strip, 5V, 2m, WS2812B":http://www.pololu.com/catalog/product/2547
-* "Addressable RGB 150-LED Strip, 5V, 5m, WS2812B":http://www.pololu.com/catalog/product/2548
-* "Addressable RGB 60-LED Strip, 5V, 1m, WS2812B":http://www.pololu.com/catalog/product/2549
-* "Addressable RGB 120-LED Strip, 5V, 2m, WS2812B":http://www.pololu.com/catalog/product/2550
-* "Addressable RGB 30-LED Strip, 5V, 1m, High-speed TM1804":http://www.pololu.com/catalog/product/2543
-* "Addressable RGB 60-LED Strip, 5V, 2m, High-speed TM1804":http://www.pololu.com/catalog/product/2544
-* "Addressable RGB 150-LED Strip, 5V, 5m, High-speed TM1804":http://www.pololu.com/catalog/product/2545
+* "Addressable RGB 30-LED Strip, 5V, 1m (WS2812B)":http://www.pololu.com/catalog/product/2546
+* "Addressable RGB 60-LED Strip, 5V, 2m (WS2812B)":http://www.pololu.com/catalog/product/2547
+* "Addressable RGB 150-LED Strip, 5V, 5m (WS2812B)":http://www.pololu.com/catalog/product/2548
+* "Addressable RGB 60-LED Strip, 5V, 1m (WS2812B)":http://www.pololu.com/catalog/product/2549
+* "Addressable RGB 120-LED Strip, 5V, 2m (WS2812B)":http://www.pololu.com/catalog/product/2550
+* "Addressable RGB 30-LED Strip, 5V, 1m (High-Speed TM1804)":http://www.pololu.com/catalog/product/2543
+* "Addressable RGB 60-LED Strip, 5V, 2m (High-Speed TM1804)":http://www.pololu.com/catalog/product/2544
+* "Addressable RGB 150-LED Strip, 5V, 5m (High-Speed TM1804)":http://www.pololu.com/catalog/product/2545
 
 If you have a high-speed TM1804 LED strip, please note that the red and green channels on the TM1804 are swapped relative to the WS2812B, so you will need to swap those channels in your code.  You might prefer to use the version of this code from commit 96bee54 (committed on 2013-10-13), which does not require you to swap red and green.
 
-This version of the code does NOT work with the older, low-speed LED strips (items #2540, #2541, and #2542).  If you have one of those, you should use the version of this code from commit edc9e9d (committed on 2013-05-09).
+This version of the code does NOT work with the older, low-speed TM1804 strips (items #2540, #2541, and #2542).  If you have one of those, you should use the version of this code from commit edc9e9d (committed on 2013-05-09).
 
 This code allows complete control over the color of an arbitrary number of LED strips with an arbitrary number of LEDs.  Each LED can be individually controlled, and LED strips can be chained together.
 
