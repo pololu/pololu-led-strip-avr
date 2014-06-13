@@ -15,7 +15,7 @@ This is example AVR C code for controlling these addressable RGB LED products fr
 * "Addressable Through-Hole 8mm RGB LED with Diffused Lens, WS2811 Driver (10-Pack)":http://www.pololu.com/product/2536
 * "Adafruit 16 WS2812 LED NeoPixel Ring":http://www.pololu.com/product/2537
 * "Adafruit 24 WS2812 LED NeoPixel Ring":http://www.pololu.com/product/2538
-* "Adafruit 15 WS2812 LED NeoPixel Ring":http://www.pololu.com/product/2539
+* "Adafruit 15 WS2812 LED NeoPixel 1/4-Ring":http://www.pololu.com/product/2539
 * "Adafruit 5&times;8 WS2812 LED NeoPixel Shield for Arduino":http://www.pololu.com/product/2772
 * "Addressable RGB 30-LED Strip, 5V, 1m &#40;High-Speed TM1804)":http://www.pololu.com/catalog/product/2543
 * "Addressable RGB 60-LED Strip, 5V, 2m &#40;High-Speed TM1804)":http://www.pololu.com/catalog/product/2544
