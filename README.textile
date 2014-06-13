@@ -21,7 +21,9 @@ This is example AVR C code for controlling these addressable RGB LED products fr
 * "Addressable RGB 60-LED Strip, 5V, 2m &#40;High-Speed TM1804)":http://www.pololu.com/catalog/product/2544
 * "Addressable RGB 150-LED Strip, 5V, 5m &#40;High-Speed TM1804)":http://www.pololu.com/catalog/product/2545
 
-If you have a WS2811 LED or high-speed TM1804 LED strip, please note that its red and green channels are swapped relative to the WS2812B, so you will need to swap those channels in your code.  You might prefer to use the version of this code from commit 96bee54 (committed on 2013-10-10), which does not require you to swap red and green.
+This example code is optimized for the WS2812B, so it transmits the colors in green-red-blue order.
+
+If you have a WS2811 LED or a high-speed TM1804 LED strip, please note that its red and green channels are swapped relative to the WS2812B, so you will need to swap those channels in your code.  You might prefer to use the version of this code from commit 96bee54 (committed on 2013-10-10), which does not require you to swap red and green.
 
 This version of the code does NOT work with the older, low-speed TM1804 strips (items #2540, #2541, and #2542).  If you have one of those, you should use the version of this code from commit edc9e9d (committed on 2013-05-09).
 
