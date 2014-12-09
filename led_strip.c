@@ -4,7 +4,7 @@
  */
 
 /* This line specifies the frequency your AVR is running at.
-   This code supports 20 MHz and 16 MHz. */
+   This code supports 20 MHz, 16 MHz and 8MHz */
 #define F_CPU 20000000
 
 // These lines specify what pin the LED strip is on.
@@ -38,7 +38,7 @@ typedef struct rgb_color
  Interrupts must be disabled during that time, so any interrupt-based library
  can be negatively affected by this function.
  
- Timing details at 20 MHz (the numbers slightly different at 16 MHz):
+ Timing details at 20 MHz (the numbers slightly different at 16 MHz and 8MHz):
   0 pulse  = 400 ns
   1 pulse  = 850 ns
   "period" = 1300 ns
@@ -83,20 +83,28 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
         // high for some time.  The amount of time the line is high depends on whether the bit is 0 or 1,
         // but this function always takes the same time (2 us).
         "send_led_strip_bit%=:\n"
-        "sbi %2, %3\n"                           // Drive the line high.
+#if F_CPU == 8000000
         "rol __tmp_reg__\n"                      // Rotate left through carry.
+#endif
+        "sbi %2, %3\n"                           // Drive the line high.
+
+#if F_CPU != 8000000
+        "rol __tmp_reg__\n"                      // Rotate left through carry.
+#endif
 
 #if F_CPU == 16000000
         "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n"
-#else
+#elif F_CPU != 8000000
 #error "Unsupported F_CPU"
 #endif
 
         "brcs .+2\n" "cbi %2, %3\n"              // If the bit to send is 0, drive the line low now.
 
-#if F_CPU == 16000000
+#if F_CPU == 8000000
+        "nop\n" "nop\n"
+#elif F_CPU == 16000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
 #elif F_CPU == 20000000
         "nop\n" "nop\n" "nop\n" "nop\n" "nop\n"
