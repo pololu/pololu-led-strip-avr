@@ -25,7 +25,7 @@ typedef struct rgb_color
 } rgb_color;
 
 /* The typical bit takes 1.45 microseconds, so you can update two strips of 30 LEDs each in less than 1.1 ms.  */
-void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color * colors2, unsigned int count) 
+void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color * colors2, unsigned int count)
 {
   LED_STRIP1_PORT &= ~(1<<LED_STRIP1_PIN);
   LED_STRIP1_DDR |= (1<<LED_STRIP1_PIN);
@@ -37,7 +37,7 @@ void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color *
   while(count--)
   {
     unsigned char b1, b2;  // brightness values
-    
+
     // Send a color to the LED strip.
     // The assembly below also increments the 'colors' pointer,
     // it will be pointing to the next color at the end of this loop.
@@ -77,14 +77,14 @@ void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color *
         "send_led_strip_bit%=:\n"
         "sbi %6, %7\n"                           // #1: Drive high.
         "nop\n" "nop\n"
-        
+
         "rol %2\n"                               // #1: Rotate left through carry.
         "sbi %8, %9\n"                           // #2: Drive high.
-        "brcs .+2\n" "cbi %6, %7\n"              // #1: If the bit to send is 0, drive the line low now.    
+        "brcs .+2\n" "cbi %6, %7\n"              // #1: If the bit to send is 0, drive the line low now.
         "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
-        
+
         "rol %3\n"                               // #2: Rotate left through carry.
-        "brcs .+2\n" "cbi %8, %9\n"              // #2: If the bit to send is 0, drive the line low now.    
+        "brcs .+2\n" "cbi %8, %9\n"              // #2: If the bit to send is 0, drive the line low now.
         "brcc .+4\n" "nop\n" "nop\n"             // Fix the timing.
 
         "cbi %6, %7\n"                           // #1: Drive low.
@@ -107,7 +107,7 @@ void __attribute__((noinline)) led_strip_write2(rgb_color * colors1, rgb_color *
     //sei(); asm volatile("nop\n"); cli();
   }
   sei();          // Re-enable interrupts now that we are done.
-  _delay_us(50);  // Hold the line low for 15 microseconds to send the reset signal.
+  _delay_us(80);  // Send the reset signal.
 }
 
 #define LED_COUNT 60
@@ -116,7 +116,7 @@ rgb_color colors1[LED_COUNT], colors2[LED_COUNT];
 int main()
 {
   unsigned int time = 0;
-  
+
   while(1)
   {
     unsigned int i;
@@ -124,7 +124,7 @@ int main()
     {
       unsigned char x = (time >> 2) - 8*i;
       colors1[i] = (rgb_color){ x, 255 - x, x };
-      
+
       x = (time >> 2) - 50*i;
       if (x > 127){ x = 255 - x; }
       x = x*x >> 8;

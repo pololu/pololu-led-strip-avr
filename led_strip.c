@@ -37,7 +37,7 @@ typedef struct rgb_color
  This function takes about 1.1 ms to update 30 LEDs.
  Interrupts must be disabled during that time, so any interrupt-based library
  can be negatively affected by this function.
- 
+
  Timing details at 20 MHz (the numbers slightly different at 16 MHz and 8MHz):
   0 pulse  = 400 ns
   1 pulse  = 850 ns
@@ -125,7 +125,7 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int 
     //sei(); asm volatile("nop\n"); cli();
   }
   sei();          // Re-enable interrupts now that we are done.
-  _delay_us(50);  // Hold the line low for 15 microseconds to send the reset signal.
+  _delay_us(80);  // Send the reset signal.
 }
 
 #define LED_COUNT 60
@@ -134,7 +134,7 @@ rgb_color colors[LED_COUNT];
 int main()
 {
   unsigned int time = 0;
-  
+
   while(1)
   {
     unsigned int i;
