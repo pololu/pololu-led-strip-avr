@@ -1,10 +1,15 @@
-/* This is AVR code for driving the RGB LED strips from Pololu.
-   It allows complete control over the color of an arbitrary number of LEDs.
-   This implementation disables interrupts while it does bit-banging with inline assembly.
- */
+// This is AVR code for driving the RGB LED strips from Pololu.
+//
+// It allows complete control over the color of an arbitrary number of LEDs.
+// This implementation disables interrupts while it does bit-banging with
+// inline assembly.
+//
+// This version uses "cbi" and "sbi" instructions, which only work on registers
+// in the first 32 bytes of I/O memory.  For a more flexible version of this
+// that can work on any register, see led_strip_ds.c.
 
-/* This line specifies the frequency your AVR is running at.
-   This code supports 20 MHz, 16 MHz and 8MHz */
+// This line specifies the frequency your AVR is running at.
+// This code supports 20 MHz, 16 MHz and 8MHz
 #define F_CPU 20000000
 
 // These lines specify what pin the LED strip is on.
@@ -17,45 +22,48 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdint.h>
 
-/** The rgb_color struct represents the color for an 8-bit RGB LED.
-    Examples:
-      Black:      (rgb_color){ 0, 0, 0 }
-      Pure red:   (rgb_color){ 255, 0, 0 }
-      Pure green: (rgb_color){ 0, 255, 0 }
-      Pure blue:  (rgb_color){ 0, 0, 255 }
-      White:      (rgb_color){ 255, 255, 255} */
+// The rgb_color struct represents the color for an 8-bit RGB LED.
+// Examples:
+//   Black:      (rgb_color){ 0, 0, 0 }
+//   Pure red:   (rgb_color){ 255, 0, 0 }
+//   Pure green: (rgb_color){ 0, 255, 0 }
+//   Pure blue:  (rgb_color){ 0, 0, 255 }
+//   White:      (rgb_color){ 255, 255, 255}
 typedef struct rgb_color
 {
-  unsigned char red, green, blue;
+  uint8_t red, green, blue;
 } rgb_color;
 
-/** led_strip_write sends a series of colors to the LED strip, updating the LEDs.
- The colors parameter should point to an array of rgb_color structs that hold the colors to send.
- The count parameter is the number of colors to send.
-
- This function takes about 1.1 ms to update 30 LEDs.
- Interrupts must be disabled during that time, so any interrupt-based library
- can be negatively affected by this function.
-
- Timing details at 20 MHz (the numbers slightly different at 16 MHz and 8MHz):
-  0 pulse  = 400 ns
-  1 pulse  = 850 ns
-  "period" = 1300 ns
- */
-void __attribute__((noinline)) led_strip_write(rgb_color * colors, unsigned int count) 
+// led_strip_write sends a series of colors to the LED strip, updating the LEDs.
+// The colors parameter should point to an array of rgb_color structs that hold
+// the colors to send.
+// The count parameter is the number of colors to send.
+// This function takes about 1.1 ms to update 30 LEDs.
+// Interrupts must be disabled during that time, so any interrupt-based library
+// can be negatively affected by this function.
+// Timing details at 20 MHz:
+//   0 pulse  = 400 ns
+//   1 pulse  = 850 ns
+//   "period" = 1300 ns
+// Timing details at 16 MHz:
+//   0 pulse  = 375 ns
+//   1 pulse  = 812.5 ns
+//   "period" = 1500 ns
+void __attribute__((noinline)) led_strip_write(rgb_color * colors, uint16_t count)
 {
   // Set the pin to be an output driving low.
   LED_STRIP_PORT &= ~(1<<LED_STRIP_PIN);
   LED_STRIP_DDR |= (1<<LED_STRIP_PIN);
 
   cli();   // Disable interrupts temporarily because we don't want our pulse timing to be messed up.
-  while(count--)
+  while (count--)
   {
     // Send a color to the LED strip.
     // The assembly below also increments the 'colors' pointer,
     // it will be pointing to the next color at the end of this loop.
-    asm volatile(
+    asm volatile (
         "ld __tmp_reg__, %a0+\n"
         "ld __tmp_reg__, %a0\n"
         "rcall send_led_strip_byte%=\n"  // Send red component.
@@ -133,14 +141,12 @@ rgb_color colors[LED_COUNT];
 
 int main()
 {
-  unsigned int time = 0;
-
-  while(1)
+  uint16_t time = 0;
+  while (1)
   {
-    unsigned int i;
-    for(i = 0; i < LED_COUNT; i++)
+    for (uint16_t i = 0; i < LED_COUNT; i++)
     {
-      unsigned char x = (time >> 2) - 8*i;
+      uint8_t x = (time >> 2) - 8 * i;
       colors[i] = (rgb_color){ x, 255 - x, x };
     }
 
